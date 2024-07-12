@@ -22,7 +22,7 @@ const ProductDetails = () => {
     id &&
       agent.Catalog.details(parseInt(id))
         .then((response) => setProduct(response))
-        .catch((err) => console.error(err))
+        .catch((err) => console.error(err.response))
         .finally(() => setLoading(false));
   }, [id]);
 
