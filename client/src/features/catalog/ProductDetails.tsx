@@ -13,6 +13,7 @@ import { useParams } from 'react-router-dom';
 import { Product } from '../../app/models/products';
 import agent from '../../app/api/agent';
 import NotFound from '../../app/errors/NotFound';
+import LoadingComponent from '../../app/layout/LoadingComponent';
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,7 +29,7 @@ const ProductDetails = () => {
   }, [id]);
 
   if (loading) {
-    return <h3>Loading...</h3>;
+    return <LoadingComponent message="Loading product..." />;
   }
 
   if (!product) {
