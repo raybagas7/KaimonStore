@@ -17,22 +17,29 @@ import { LoadingButton } from '@mui/lab';
 
 const BasketPage = () => {
   const { basket, setBasket, removeItem } = useStoreContext();
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState({
+    loading: false,
+    name: '',
+  });
 
-  function handleAddItem(productId: number) {
-    setLoading(true);
+  function handleAddItem(productId: number, name: string) {
+    setStatus({ loading: true, name });
     agent.Basket.addItem(productId)
       .then((basket) => setBasket(basket))
       .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
+      .finally(() => setStatus({ loading: false, name: '' }));
   }
 
-  function handleRemoveItem(productId: number, quantity: number = 1) {
-    setLoading(true);
+  function handleRemoveItem(
+    productId: number,
+    quantity: number = 1,
+    name: string
+  ) {
+    setStatus({ loading: true, name });
     agent.Basket.removeItem(productId, quantity)
       .then(() => removeItem(productId, quantity))
       .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
+      .finally(() => setStatus({ loading: false, name: '' }));
   }
 
   if (!basket) {
@@ -75,16 +82,28 @@ const BasketPage = () => {
               </TableCell>
               <TableCell align="center">
                 <LoadingButton
-                  loading={loading}
-                  onClick={() => handleRemoveItem(item.productId, 1)}
+                  loading={
+                    status.loading && status.name === 'remove' + item.productId
+                  }
+                  onClick={() =>
+                    handleRemoveItem(
+                      item.productId,
+                      1,
+                      'remove' + item.productId
+                    )
+                  }
                   color="error"
                 >
                   <Remove />
                 </LoadingButton>
                 {item.quantity}
                 <LoadingButton
-                  loading={loading}
-                  onClick={() => handleAddItem(item.productId)}
+                  loading={
+                    status.loading && status.name === 'add' + item.productId
+                  }
+                  onClick={() =>
+                    handleAddItem(item.productId, 'add' + item.productId)
+                  }
                   color="secondary"
                 >
                   <Add />
@@ -95,9 +114,15 @@ const BasketPage = () => {
               </TableCell>
               <TableCell align="right">
                 <LoadingButton
-                  loading={loading}
+                  loading={
+                    status.loading && status.name === 'delete' + item.productId
+                  }
                   onClick={() =>
-                    handleRemoveItem(item.productId, item.quantity)
+                    handleRemoveItem(
+                      item.productId,
+                      item.quantity,
+                      'delete' + item.productId
+                    )
                   }
                   color="error"
                 >
